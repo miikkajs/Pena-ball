@@ -58,23 +58,31 @@ class GameState extends Phaser.State {
     const ball = new Ball(this.game, 200, 400);
     this.game.foreground.add(ball);
 
-		// This is a game sprite example
-		// this.player = new GameObject(this.game, center.x, center.y + 100, 'plane', 0);
-
-		// Create directional keys
 
 	}
 
   createTeam(team){
     team.players = team.startingLocations.map(coords => {
+
       return new Player(this.game, coords.x, coords.y, team.name);
     });
 
-    team.players.forEach(player => this.game.foreground.add(player));
+    team.players.forEach(player => {
+      this.game.physics.arcade.enable(player);
+      player.body.setCircle(16);
+      player.body.collideWorldBounds = true;
+      player.init();
+      this.game.foreground.add(player)
+    });
 
   }
 
 	update(){
+
+
+    this.game.physics.arcade.collide(this.team1.players, this.team2.players);
+
+
 		// Do all your game loop stuff here
 
 
@@ -101,6 +109,13 @@ class GameState extends Phaser.State {
 
     // use the bitmap data as the texture for the sprite
     this.game.background.add(field);
+  }
+
+  render(){
+    this.team1.players.forEach(player => {
+    this.game.debug.body(player)
+    });
+
   }
 
 
