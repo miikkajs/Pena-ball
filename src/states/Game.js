@@ -26,7 +26,7 @@ class GameState extends Phaser.State {
     };
     this.ball = {};
   }
-  
+
 
 	preload() {
 		console.log('Game preload');
@@ -49,7 +49,6 @@ class GameState extends Phaser.State {
 
 		let center = { x: this.game.world.centerX, y: this.game.world.centerY };
 
-
     this.createField();
 
     this.createTeam(this.team1);
@@ -71,7 +70,6 @@ class GameState extends Phaser.State {
     this.mouseBody.body.setCircle(10);
     this.mouseBody.body.data.shapes[0].sensor = true;
 
-
 	}
 
   click(pointer) {
@@ -85,12 +83,23 @@ class GameState extends Phaser.State {
     if (this.clickedBody) {
       console.log("Released, player should spring! ");
       // console.log("Mouse: " + this.game.mouseBody + " - " + this.clickedBody)
-      this.mouseSpring = this.game.physics.p2.createSpring(this.mouseBody.body, this.clickedBody, 0, 30, 1);
+      // this.mouseSpring = this.game.physics.p2.createSpring(this.mouseBody.body, this.clickedBody, 0, 30, 1);
+      console.log("Click: ", this.clickedBody, this.mouseBody.body.x, this.mouseBody.body.y);
+      this.accelerateToObject(this.clickedBody, this.mouseBody.body, 10);
     }
     this.clickedBody = null;
+  }
 
-
-}
+  accelerateToObject(obj1, obj2, speed) {
+    console.log("Accelerating..?");
+    if (typeof speed === 'undefined') { speed = 60; }
+    var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+    obj1.rotation = angle + this.game.math.degToRad(90);  // correct angle of angry bullets (depends on the sprite used)
+    const force = Float32Array.of(Math.cos(angle) * speed, Math.sin(angle) * speed);
+    obj1.applyForce(force, obj1.x, obj1.y);
+    // obj1.force.x = Math.cos(angle) * speed;    // accelerateToObject
+    // obj1.force.y = Math.sin(angle) * speed;
+  }
 
   createTeam(team){
     team.players = team.startingLocations.map(coords => {
@@ -113,6 +122,8 @@ class GameState extends Phaser.State {
 
     this.mouseBody.body.x = this.game.input.mousePointer.x;
     this.mouseBody.body.y = this.game.input.mousePointer.y;
+
+    console.log("Player coords: ", this.team1.players[0].x, this.team1.players[0].y)
 		// Do all your game loop stuff here
 
     // console.log(this.game.input)
