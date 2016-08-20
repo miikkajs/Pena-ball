@@ -1,7 +1,10 @@
 // import GameObject from 'objects/GameObject';
 import Player from 'Objects/Player';
+import Ball from 'Objects/Ball';
 
 class GameState extends Phaser.State {
+  
+  
 
 	preload() {
 		console.log('Game preload');
@@ -25,6 +28,9 @@ class GameState extends Phaser.State {
     this.createField();
     const player = new Player(this.game, 100, 100, 1);
 		this.game.foreground.add(player);
+
+    const ball = new Ball(this.game, 200, 400);
+    this.game.foreground.add(ball);
 
 		// This is a game sprite example
 		// this.player = new GameObject(this.game, center.x, center.y + 100, 'plane', 0);
