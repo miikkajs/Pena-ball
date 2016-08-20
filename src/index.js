@@ -6,7 +6,7 @@ import MainmenuState from 'states/Mainmenu';
 class Game extends Phaser.Game {
 
 	constructor() {
-		super(800, 480, Phaser.AUTO, 'content', null);
+		super(480, 800, Phaser.AUTO, 'content', null);
 
 		// Create the game states
 		this.state.add('BootState', BootState, false);
