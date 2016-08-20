@@ -18,9 +18,9 @@ class GameState extends Phaser.State {
     this.team2 = {
       name: 'team2',
       startingLocations: [
-        {x: 100,  y: 700},
-        {x: 200,  y: 600},
-        {x: 300,  y: 700}
+        {x: 130,  y: 700},
+        {x: 230,  y: 600},
+        {x: 330,  y: 700}
       ],
       players: []
     };
@@ -43,6 +43,9 @@ class GameState extends Phaser.State {
 
 	create() {
 		console.log('Game create');
+    this.game.physics.startSystem(Phaser.Physics.P2JS);
+    // this.game.physics.p2.defaultRestitution = 0;
+    console.log('this.game.physics.p2',this.game.physics.p2);
 
 		let center = { x: this.game.world.centerX, y: this.game.world.centerY };
 
@@ -58,8 +61,36 @@ class GameState extends Phaser.State {
     const ball = new Ball(this.game, 200, 400);
     this.game.foreground.add(ball);
 
+    this.game.input.onDown.add(this.click, this);
+    this.game.input.onUp.add(this.release, this);
+    // this.game.input.addMoveCallback(move, this);
+
+    this.mouseBody = this.game.add.sprite(0, 0, 'cursor');
+    this.game.physics.p2.enable(this.mouseBody, true);
+    this.mouseBody.body.static = true;
+    this.mouseBody.body.setCircle(10);
+    this.mouseBody.body.data.shapes[0].sensor = true;
+
 
 	}
+
+  click(pointer) {
+
+    this.clickedBody = this.game.physics.p2.hitTest(pointer.position, this.team1.players)[0];
+  // console.log('bodies',bodies);
+
+}
+
+  release() {
+    if (this.clickedBody) {
+      console.log("Released, player should spring! ");
+      // console.log("Mouse: " + this.game.mouseBody + " - " + this.clickedBody)
+      this.mouseSpring = this.game.physics.p2.createSpring(this.mouseBody.body, this.clickedBody, 0, 30, 1);
+    }
+    this.clickedBody = null;
+
+
+}
 
   createTeam(team){
     team.players = team.startingLocations.map(coords => {
@@ -68,7 +99,8 @@ class GameState extends Phaser.State {
     });
 
     team.players.forEach(player => {
-      this.game.physics.arcade.enable(player);
+      this.game.physics.p2.enable(player);
+      player.body.setZeroDamping();
       player.body.setCircle(16);
       player.body.collideWorldBounds = true;
       player.init();
@@ -79,11 +111,12 @@ class GameState extends Phaser.State {
 
 	update(){
 
-
-    this.game.physics.arcade.collide(this.team1.players, this.team2.players);
-
-
+    this.mouseBody.body.x = this.game.input.mousePointer.x;
+    this.mouseBody.body.y = this.game.input.mousePointer.y;
 		// Do all your game loop stuff here
+
+    // console.log(this.game.input)
+    // console.log("Mouse: " + this.game.input.pointer.x + " - " + this.game.input.pointer.y);
 
 
 	}
