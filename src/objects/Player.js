@@ -1,8 +1,8 @@
 import GameObject from 'objects/GameObject';
 class Player extends GameObject {
 
-  constructor(game, x, y, teamNumber){
-    super(game, x, y, 'team'+ teamNumber, 0);
+  constructor(game, x, y, teamName){
+    super(game, x, y, teamName, 0);
     this.game = game;
   }
 

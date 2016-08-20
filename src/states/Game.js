@@ -3,7 +3,29 @@ import Player from 'Objects/Player';
 import Ball from 'Objects/Ball';
 
 class GameState extends Phaser.State {
-  
+
+  constructor(){
+    super();
+    this.team1 = {
+      name: 'team1',
+      startingLocations: [
+        {x: 100,  y: 100},
+        {x: 200,  y: 200},
+        {x: 300,  y: 100}
+      ],
+      players: []
+    };
+    this.team2 = {
+      name: 'team2',
+      startingLocations: [
+        {x: 100,  y: 700},
+        {x: 200,  y: 600},
+        {x: 300,  y: 700}
+      ],
+      players: []
+    };
+    this.ball = {};
+  }
   
 
 	preload() {
@@ -26,8 +48,12 @@ class GameState extends Phaser.State {
 
 
     this.createField();
-    const player = new Player(this.game, 100, 100, 1);
-		this.game.foreground.add(player);
+
+    this.createTeam(this.team1);
+    this.createTeam(this.team2);
+
+    // const player = new Player(this.game, 100, 100, 1);
+    // this.game.foreground.add(player);
 
     const ball = new Ball(this.game, 200, 400);
     this.game.foreground.add(ball);
@@ -38,6 +64,15 @@ class GameState extends Phaser.State {
 		// Create directional keys
 
 	}
+
+  createTeam(team){
+    team.players = team.startingLocations.map(coords => {
+      return new Player(this.game, coords.x, coords.y, team.name);
+    });
+
+    team.players.forEach(player => this.game.foreground.add(player));
+
+  }
 
 	update(){
 		// Do all your game loop stuff here
